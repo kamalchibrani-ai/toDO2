@@ -10,8 +10,12 @@ import UIKit
 
 class ToDoViewController: UITableViewController {
     var itemArray = ["1","2","3"]
+    let defaults = UserDefaults()
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let   items = defaults.array(forKey: "itemArrayList") as? [String]{
+            itemArray = items
+        }
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -62,6 +66,7 @@ class ToDoViewController: UITableViewController {
             // what will happen when user will press add new item button
             print(addItemTextField.text! )
             self.itemArray.append(addItemTextField.text!)
+            self.defaults.set(self.itemArray, forKey: "itemArrayList")
             self.tableView.reloadData()
             print(self.itemArray.count)
         }
