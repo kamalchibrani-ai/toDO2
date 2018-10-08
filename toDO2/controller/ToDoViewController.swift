@@ -7,16 +7,19 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoViewController: UITableViewController {
     var itemArray = [Item]()
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
 
    // let defaults = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(dataFilePath!)
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
         
 
         
@@ -24,7 +27,12 @@ class ToDoViewController: UITableViewController {
 //            itemArray = items
 //        }   ***********************************  need to change it later ***************
         
+        
+        
         loadItem()
+        
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -63,9 +71,13 @@ class ToDoViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
        // print(itemArray[indexPath.row])
         
+        
+       // context.delete(itemArray[indexPath.row]) //this will remove item from the context on click
+        //itemArray.remove(at: indexPath.row)
+        
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done //this replaces the code below
         
-        doCatchBlockForEncoder()
+        saveItem()
         
 //        if  itemArray[indexPath.row].done == false {
 //            itemArray[indexPath.row].done = true
@@ -101,8 +113,12 @@ class ToDoViewController: UITableViewController {
         
         let action = UIAlertAction(title: "add item", style: .default) { (action) in
             // what will happen when user will press add new item button
-            let newItem = Item()
+            
+            
+            let newItem = Item(context: self.context)
+            
             newItem.title = addItemTextField.text!
+            newItem.done = false
             print(addItemTextField.text! )
 
             self.itemArray.append(newItem)
@@ -117,7 +133,7 @@ class ToDoViewController: UITableViewController {
 //                print("error in encoder \(error)")
 //            }
 //
-           self.doCatchBlockForEncoder()
+           self.saveItem()
             
             
             
@@ -137,33 +153,60 @@ class ToDoViewController: UITableViewController {
         
     }
     
-    func doCatchBlockForEncoder()  {
-        let encoder = PropertyListEncoder()
+    // MARK:- model manupaltion method
+    
+    
+    
+    func saveItem()  {
+       
         
         do{
-            let data = try encoder.encode(self.itemArray)
-            try data.write(to: self.dataFilePath!)
+            try context.save()
             
         }
         catch{
-            print("error in encoder \(error)")
+            print("error in saving context \(error)")
         }
+        self.tableView.reloadData()
     }
     
     
     
     func loadItem()  {
-        if let data = try?  Data(contentsOf: dataFilePath!){
-        let decoder = PropertyListDecoder()
-            do {
-                        itemArray = try decoder.decode([Item].self, from: data)
-            }catch{
-                print("error in decoding the content \(error)")
-            }
         
-    }
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        do{
+            itemArray =  try context.fetch(request)
+        } catch {
+            print("request made to the database \(error)")
+        }
+       
+}
     
-
+    
+    
+    
+  
 }
 
+// MARK :- search bar methods
+
+extension ToDoViewController: UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "title CONTAINS [cd] %@", searchBar.text!)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+       
+        
+        do{
+            itemArray =  try context.fetch(request)
+        } catch {
+            print("request made to the database \(error)")
+        }
+       tableView.reloadData()
+    }
 }
+
+
