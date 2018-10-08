@@ -10,26 +10,21 @@ import UIKit
 
 class ToDoViewController: UITableViewController {
     var itemArray = [Item]()
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+
+   // let defaults = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.title = "1"
-        itemArray.append(newItem)
+        print(dataFilePath!)
         
-        let newItem2 = Item()
-        newItem2.title = "2"
-        itemArray.append(newItem2)
-
-        let newItem3 = Item()
-        newItem3.title = "3"
-        itemArray.append(newItem3)
 
         
-        if let   items = defaults.array(forKey: "itemArrayList") as? [Item]{
-            itemArray = items
-        }
+//        if let   items = defaults.array(forKey: "itemArrayList") as? [Item]{
+//            itemArray = items
+//        }   ***********************************  need to change it later ***************
+        
+        loadItem()
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -70,6 +65,8 @@ class ToDoViewController: UITableViewController {
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done //this replaces the code below
         
+        doCatchBlockForEncoder()
+        
 //        if  itemArray[indexPath.row].done == false {
 //            itemArray[indexPath.row].done = true
 //        }
@@ -109,7 +106,24 @@ class ToDoViewController: UITableViewController {
             print(addItemTextField.text! )
 
             self.itemArray.append(newItem)
-            self.defaults.set(self.itemArray, forKey: "itemArrayList")
+//            let encoder = PropertyListEncoder()
+//
+//            do{
+//                    let data = try encoder.encode(self.itemArray)
+//                try data.write(to: self.dataFilePath!)
+//
+//            }
+//            catch{
+//                print("error in encoder \(error)")
+//            }
+//
+           self.doCatchBlockForEncoder()
+            
+            
+            
+            
+            
+          //  self.defaults.set(self.itemArray, forKey: "itemArrayList")      deleted
             self.tableView.reloadData()
          //   print(self.itemArray.count)
         }
@@ -123,7 +137,33 @@ class ToDoViewController: UITableViewController {
         
     }
     
+    func doCatchBlockForEncoder()  {
+        let encoder = PropertyListEncoder()
+        
+        do{
+            let data = try encoder.encode(self.itemArray)
+            try data.write(to: self.dataFilePath!)
+            
+        }
+        catch{
+            print("error in encoder \(error)")
+        }
+    }
+    
+    
+    
+    func loadItem()  {
+        if let data = try?  Data(contentsOf: dataFilePath!){
+        let decoder = PropertyListDecoder()
+            do {
+                        itemArray = try decoder.decode([Item].self, from: data)
+            }catch{
+                print("error in decoding the content \(error)")
+            }
+        
+    }
     
 
 }
 
+}
