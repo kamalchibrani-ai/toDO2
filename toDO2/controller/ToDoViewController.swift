@@ -11,6 +11,11 @@ import CoreData
 
 class ToDoViewController: UITableViewController {
     var itemArray = [Item]()
+    var selectedCategory : Category? {
+        didSet{
+            loadItem()
+        }
+    }
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
 
@@ -29,7 +34,7 @@ class ToDoViewController: UITableViewController {
         
         
         
-        loadItem()
+     //   loadItem()
         
         
         
@@ -119,6 +124,7 @@ class ToDoViewController: UITableViewController {
             
             newItem.title = addItemTextField.text!
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             print(addItemTextField.text! )
 
             self.itemArray.append(newItem)
@@ -172,9 +178,17 @@ class ToDoViewController: UITableViewController {
     
     
     
-    func loadItem(with request : NSFetchRequest<Item> = Item.fetchRequest())  {
+    func loadItem(with request : NSFetchRequest<Item> = Item.fetchRequest() , predicate:NSPredicate? = nil )  {
         
 //        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", (selectedCategory!.name!))
+        if let additionalPredicate = predicate{
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate,additionalPredicate])
+        }else{
+            request.predicate = categoryPredicate
+        }
+        let compundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate!,categoryPredicate])
+        request.predicate = compundPredicate
         
         do{
             itemArray =  try context.fetch(request)

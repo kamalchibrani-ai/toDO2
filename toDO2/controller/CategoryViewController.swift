@@ -24,7 +24,7 @@ class CategoryViewController: UITableViewController {
     
     }
 
-    // Mark :- table view datasource methods
+    // MARK:- table view datasource methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categoryArray.count
@@ -40,13 +40,14 @@ class CategoryViewController: UITableViewController {
     }
     
     
-    // MARK :- table view delgate methods
+    // MARK:- table view delgate methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "goToItems", sender: self)
+        
+        performSegue(withIdentifier: "goToItems", sender: self) // koi bhi row select hone prr segue perform hota hai
         
     }
-    
+    //segue pehle prepare hoga
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! ToDoViewController
         
@@ -56,7 +57,7 @@ class CategoryViewController: UITableViewController {
         
     }
     
-    // Mark :- data manipulation Methods
+    // MARK:- data manipulation Methods
     
     func saveCategory()  {
        
@@ -80,7 +81,7 @@ class CategoryViewController: UITableViewController {
     }
     
     
-    //Mark :-  add button new categories
+    // MARK:-  add button new categories
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var addCategoryTextField = UITextField()
