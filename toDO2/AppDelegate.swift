@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+       
+
+        
+   
+        
+        do{
+            let realm = try Realm()
+           try realm.write {
+             
+            }
+            
+        }catch{
+            print("error in initializing realm database \(error)")
+        }
+        
+        
+        
+        
+        
         // Override point for customization after application launch.
      //   print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
         return true

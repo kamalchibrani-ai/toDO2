@@ -7,10 +7,11 @@
 //
 
 import UIKit
-import CoreData
+//import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
-    
+    let realm = try! Realm()
     var categoryArray = [Category]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
@@ -19,7 +20,7 @@ class CategoryViewController: UITableViewController {
         
     print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        loadcategory()
+//        loadcategory()
 
     
     }
@@ -59,10 +60,12 @@ class CategoryViewController: UITableViewController {
     
     // MARK:- data manipulation Methods
     
-    func saveCategory()  {
+    func saveCategory(category : Category)  {
        
         do{
-         try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         }
         catch {
             print("error in saving item is \(error)")
@@ -71,14 +74,14 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func loadcategory( with request : NSFetchRequest<Category> = Category.fetchRequest())  {
-        do {
-            categoryArray = try context.fetch(request)
-        }
-        catch {
-            print("error in fetching the data is \(error)")
-        }
-    }
+//    func loadcategory( with request : NSFetchRequest<Category> = Category.fetchRequest())  {
+//        do {
+//            categoryArray = try context.fetch(request)
+//        }
+//        catch {
+//            print("error in fetching the data is \(error)")
+//        }
+//    }
     
     
     // MARK:-  add button new categories
@@ -89,13 +92,13 @@ class CategoryViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
-            let newCategory = Category(context: self.context)
-            newCategory.name = addCategoryTextField.text
+            let newCategory = Category()
+            newCategory.name = addCategoryTextField.text!
             print(addCategoryTextField.text!)
             
             self.categoryArray.append(newCategory)
             
-           self.saveCategory()
+           self.saveCategory(category: newCategory)
             
             self.tableView.reloadData()
             
