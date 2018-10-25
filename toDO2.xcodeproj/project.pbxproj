@@ -78,7 +78,7 @@
 			children = (
 				2AA164502167AC65008E497A /* AppDelegate.swift */,
 				2AA6AD072168C41100043845 /* controller */,
-				2AA6AD062168C3FE00043845 /* Data Model */,
+				2AA6AD062168C3FE00043845 /* Data model */,
 				2AA6AD082168C42200043845 /* view */,
 				2AA6AD092168C45100043845 /* Supporting Files */,
 				2AA1645C2167AC68008E497A /* Info.plist */,
@@ -86,13 +86,13 @@
 			path = toDO2;
 			sourceTree = "<group>";
 		};
-		2AA6AD062168C3FE00043845 /* Data Model */ = {
+		2AA6AD062168C3FE00043845 /* Data model */ = {
 			isa = PBXGroup;
 			children = (
 				2A1558AE217F5E7D0045E2D5 /* Category.swift */,
 				2A1558B0217F5EA10045E2D5 /* Item.swift */,
 			);
-			path = "Data Model";
+			path = "Data model";
 			sourceTree = "<group>";
 		};
 		2AA6AD072168C41100043845 /* controller */ = {
