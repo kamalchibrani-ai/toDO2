@@ -106,7 +106,7 @@ class ToDoViewController: UITableViewController {
                 do{
                     try  self.realm.write {
                         let newItem = Item()
-                        newItem.title = addItemTextField.text!
+                       newItem.title = addItemTextField.text!
                         newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
                     }
