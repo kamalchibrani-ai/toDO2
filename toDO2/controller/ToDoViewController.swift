@@ -8,9 +8,9 @@
 
 import UIKit
 import RealmSwift
-import SwipeCellKit
+//import SwipeCellKit
 
-class ToDoViewController: UITableViewController {
+class ToDoViewController: SwipeTableViewController {
     var toDoItems : Results<Item>?
     
     let realm = try!  Realm()
@@ -30,19 +30,8 @@ class ToDoViewController: UITableViewController {
         
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        
+            tableView.rowHeight = 80.0
 
-        
-//        if let   items = defaults.array(forKey: "itemArrayList") as? [Item]{
-//            itemArray = items
-//        }   ***********************************  need to change it later ***************
-        
-        
-        
-        
-        
-        
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     
@@ -54,7 +43,8 @@ class ToDoViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoTableItemCell", for: indexPath)
+       
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if  let item = toDoItems?[indexPath.row]{
             cell.textLabel?.text = item.title
@@ -64,9 +54,7 @@ class ToDoViewController: UITableViewController {
         }else{
             cell.textLabel?.text = "no items added"
         }
-    
-        
-        return cell
+    return cell
     }
     
     
@@ -85,7 +73,7 @@ class ToDoViewController: UITableViewController {
             }
         }
 
-        tableView.reloadData()
+//        tableView.reloadData()
 
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -136,6 +124,21 @@ class ToDoViewController: UITableViewController {
             toDoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
             tableView.reloadData()
         }
+    
+    // MARK: - delete cell using swipe
+    override func updateTable(at IndexPath: IndexPath) {
+        if let  itemForDeletion = self.toDoItems?[IndexPath.row]{
+            do{
+                try self.realm.write {
+                    self.realm.delete(itemForDeletion)
+                }
+                
+            }catch {
+                print("error while deleting\(error)")
+            }
+            
+        }
+    }
         
 
 }
